@@ -216,16 +216,24 @@ public class Model extends Observable {
             moveExisted = true;
         } else {
             int boardSize = b.size();
-            for(int i = 0; i < boardSize - 1; i ++) {
+            for(int i = 0; i < boardSize; i ++) {
                 if(moveExisted) break;
-                for(int j = 0; j < boardSize - 1; j ++) {
+                for(int j = 0; j < boardSize; j ++) {
                     Tile curTile = b.tile(i, j);
-                    Tile rightTile = b.tile(i + 1, j);
-                    Tile topTile = b.tile(i, j + 1);
+                    if(i + 1 < boardSize) {
+                        Tile rightTile = b.tile(i + 1, j);
+                        if(curTile.value() == rightTile.value()) {
+                            moveExisted = true;
+                            break;
+                        }
+                    }
+                    if(j + 1 < boardSize) {
+                        Tile topTile = b.tile(i, j + 1);
 
-                    if(curTile.value() == rightTile.value() || curTile.value() == topTile.value()) {
-                        moveExisted = true;
-                        break;
+                        if(curTile.value() == topTile.value()) {
+                            moveExisted = true;
+                            break;
+                        }
                     }
                 }
             }
