@@ -114,30 +114,34 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
-        board.setViewingPerspective(Side.SOUTH);
+        board.setViewingPerspective(side);
         int boardSize = board.size();
 
         for(int i = 0; i < boardSize; i ++) {
-            int endPosition = 0;
-            for(int j = 1; j < boardSize; j ++) {
+            int endPosition = boardSize - 1;
+            boolean lastMerged = false;
+            for(int j = boardSize - 2; j >= 0; j --) {
                 Tile originTile = board.tile(i ,j);
                 if(originTile == null) continue;
                 int curPosition = j ;
-                int nextPosition = j - 1;
-                while(nextPosition >= endPosition && board.tile(i, nextPosition) == null) {
+                int nextPosition = j + 1;
+                while(nextPosition <= endPosition && board.tile(i, nextPosition) == null) {
                     curPosition = nextPosition;
-                    nextPosition --;
+                    nextPosition ++;
                 }
-                if(nextPosition >= endPosition && board.tile(i, nextPosition).value() == originTile.value()) {
+                if(nextPosition <= endPosition && board.tile(i, nextPosition).value() == originTile.value() && !lastMerged) {
                     score += 2 * originTile.value();
-                    curPosition --;
+                    curPosition = nextPosition;
+                    lastMerged = true;
+                } else {
+                    lastMerged = false;
                 }
                 if(curPosition != j) changed = true;
                 board.move(i, curPosition, originTile);
-                endPosition = curPosition + 1;
+                endPosition = curPosition;
             }
         }
-        board.setViewingPerspective(side);
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
